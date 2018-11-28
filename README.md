@@ -1,6 +1,13 @@
 # tic-tac-toe
 
-Python 3.x
+install Python 3.x
+
+# Run game
+
+```sh
+python main.py
+```
+
 
 # Run unit tests
 

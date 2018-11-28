@@ -1,6 +1,6 @@
 import unittest
 
-from main import get_list_by_N, print_map, check_all_same_markers_in_row
+from main import get_list_by_N, create_map_by_N, check_all_same_markers_in_row
 
 class TestMain(unittest.TestCase):
     def test_get_list_by_N(self):
@@ -12,10 +12,10 @@ class TestMain(unittest.TestCase):
         expected = [None] * 9
         self.assertEqual(result, expected)
 
-    def test_print_map(self):
+    def test_create_map_by_N(self):
         n = 3
         play_list = [None] * n * n
-        result = print_map(n, play_list)
+        result = create_map_by_N(n, play_list)
         expected = (
             " 1 | 2 | 3 \n" +
             "-----------\n" +
@@ -30,7 +30,7 @@ class TestMain(unittest.TestCase):
             None, True, False,
             None, None, None
         ]
-        result = print_map(n, play_list)
+        result = create_map_by_N(n, play_list)
         expected = (
             " 1 | 2 | 3 \n" +
             "-----------\n" +
@@ -42,7 +42,7 @@ class TestMain(unittest.TestCase):
 
         n = 4
         play_list = [None] * n * n
-        result = print_map(n, play_list)
+        result = create_map_by_N(n, play_list)
         expected = (
             "  1 |  2 |  3 |  4 \n" +
             "-------------------\n" +
@@ -60,7 +60,7 @@ class TestMain(unittest.TestCase):
             None, None, True, None,
             None, None, None, False
         ]
-        result = print_map(n, play_list)
+        result = create_map_by_N(n, play_list)
         expected = (
             "  1 |  2 |  3 |  4 \n" +
             "-------------------\n" +

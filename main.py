@@ -1,7 +1,7 @@
 def get_list_by_N(n):
     return [None] * n * n
 
-def print_map(n, play_list):
+def create_map_by_N(n, play_list):
     n_format = n * n // 10 + 1
     flexible_format = "{}".format(n_format)
     flexible_format_template = " {:" + flexible_format + "d} "
@@ -22,71 +22,52 @@ def print_map(n, play_list):
             result += separator
     return result
 
-def get_n_vertical_marker_from_position(n, is_player_a, play_list, position_to_index):
+def count_max_n_markers_in_rows(valid_indexes, play_list, is_player_a):
     result = 0
-    valid_indexes = [
+    for index in valid_indexes:
+        if play_list[index] == is_player_a:
+            result += 1
+        else:
+            result = 0
+        if result >= 3:
+            break
+    return result
+
+def get_n_vertical_marker_from_position(n, is_player_a, play_list, position_to_index):
+    possible_indexes = [
         index for index
         in range(position_to_index - 2 * n, position_to_index + 2 * n + 1, n)
         if index >= 0 and index < n * n
     ]
-    for index in valid_indexes:
-        if play_list[index] == is_player_a:
-            result += 1
-        else:
-            result = 0
-        if result >= 3:
-            break
-    return result
+    return count_max_n_markers_in_rows(possible_indexes, play_list, is_player_a)
+
+
 
 def get_n_horizontal_marker_from_position(n, is_player_a, play_list, position_to_index):
-    result = 0
     left_end_margin = 2 if position_to_index % n > 2 else position_to_index % n
     right_end_margin = 2 if n - position_to_index % n > 2 else n - position_to_index % n
-    valid_indexes = [
+    possible_indexes = [
         index for index
         in range(position_to_index - left_end_margin, position_to_index + right_end_margin + 1, 1)
         if index >= 0 and index < n * n
     ]
-    for index in valid_indexes:
-        if play_list[index] == is_player_a:
-            result += 1
-        else:
-            result = 0
-        if result >= 3:
-            break
-    return result
+    return count_max_n_markers_in_rows(possible_indexes, play_list, is_player_a)
 
 def get_n_left_up_diagonal_marker_from_position(n, is_player_a, play_list, position_to_index):
-    result = 0
-    valid_indexes = [
+    possible_indexes = [
         index for index
         in range(position_to_index - 2 * (n+1), position_to_index + 2 * (n+1) + 1, n + 1)
         if index >= 0 and index < n * n
     ]
-    for index in valid_indexes:
-        if play_list[index] == is_player_a:
-            result += 1
-        else:
-            result = 0
-        if result >= 3:
-            break
-    return result
+    return count_max_n_markers_in_rows(possible_indexes, play_list, is_player_a)
 
 def get_n_right_up_diagonal_marker_from_position(n, is_player_a, play_list, position_to_index):
-    result = 0
-    valid_indexes = [
+    possible_indexes = [
         index for index
         in range(position_to_index - 2 * (n-1), position_to_index + 2 * (n-1) + 1, n - 1)
         if index >= 2 and index < n * n - 2
     ]
-    for index in valid_indexes:
-        if play_list[index] == is_player_a:
-            result += 1
-        else:
-            result = 0
-        if result >= 3:
-            break
-    return result
+    return count_max_n_markers_in_rows(possible_indexes, play_list, is_player_a)
 
 def check_all_same_markers_in_row(n, position, play_list, is_player_a):
 
@@ -146,12 +127,12 @@ if __name__ == "__main__":
     play_list = get_list_by_N(n)
 
     inGame = True
-    print(print_map(n, play_list))
+    print(create_map_by_N(n, play_list))
     while inGame:
         position = int(input(playerA + ", choose a box to place an 'o' into: \n>> "))
         canWinA = check_all_same_markers_in_row(n, position, play_list, True) > 0
 
-        print(print_map(n, play_list))
+        print(create_map_by_N(n, play_list))
         if canWinA:
             print("Congratulations {}! You have won.".format(playerA))
             break
@@ -159,7 +140,7 @@ if __name__ == "__main__":
         position = int(input(playerB + ", choose a box to place an 'x' into: \n>> "))
         canWinB = check_all_same_markers_in_row(n, position, play_list, False) > 0
 
-        print(print_map(n, play_list))
+        print(create_map_by_N(n, play_list))
         if canWinB:
             print("Congratulations {}! You have won.".format(playerB))
             break
