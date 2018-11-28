@@ -5,7 +5,7 @@ def print_map(n, play_list):
     n_format = n * n // 10 + 1
     flexible_format = "{}".format(n_format)
     flexible_format_template = " {:" + flexible_format + "d} "
-    flexible_format_template_str = " {:>" + flexible_format + "s} "    
+    flexible_format_template_str = " {:>" + flexible_format + "s} "
     separator = "\n" + "-".join(["-" * (n_format + 2)] * n) + "\n"
     result = ""
     for row in range(0, n):
@@ -22,26 +22,144 @@ def print_map(n, play_list):
             result += separator
     return result
 
+def get_n_vertical_marker_from_position(n, is_player_a, play_list, position_to_index):
+    result = 0
+    valid_indexes = [
+        index for index
+        in range(position_to_index - 2 * n, position_to_index + 2 * n + 1, n)
+        if index >= 0 and index < n * n
+    ]
+    for index in valid_indexes:
+        if play_list[index] == is_player_a:
+            result += 1
+        else:
+            result = 0
+        if result >= 3:
+            break
+    return result
+
+def get_n_horizontal_marker_from_position(n, is_player_a, play_list, position_to_index):
+    result = 0
+    left_end_margin = 2 if position_to_index % n > 2 else position_to_index % n
+    right_end_margin = 2 if n - position_to_index % n > 2 else n - position_to_index % n
+    valid_indexes = [
+        index for index
+        in range(position_to_index - left_end_margin, position_to_index + right_end_margin + 1, 1)
+        if index >= 0 and index < n * n
+    ]
+    for index in valid_indexes:
+        if play_list[index] == is_player_a:
+            result += 1
+        else:
+            result = 0
+        if result >= 3:
+            break
+    return result
+
+def get_n_left_up_diagonal_marker_from_position(n, is_player_a, play_list, position_to_index):
+    result = 0
+    valid_indexes = [
+        index for index
+        in range(position_to_index - 2 * (n+1), position_to_index + 2 * (n+1) + 1, n + 1)
+        if index >= 0 and index < n * n
+    ]
+    for index in valid_indexes:
+        if play_list[index] == is_player_a:
+            result += 1
+        else:
+            result = 0
+        if result >= 3:
+            break
+    return result
+
+def get_n_right_up_diagonal_marker_from_position(n, is_player_a, play_list, position_to_index):
+    result = 0
+    valid_indexes = [
+        index for index
+        in range(position_to_index - 2 * (n-1), position_to_index + 2 * (n-1) + 1, n - 1)
+        if index >= 2 and index < n * n - 2
+    ]
+    for index in valid_indexes:
+        if play_list[index] == is_player_a:
+            result += 1
+        else:
+            result = 0
+        if result >= 3:
+            break
+    return result
+
 def check_all_same_markers_in_row(n, position, play_list, is_player_a):
-    ## write unit test for the code below
-    # if play_list[position - 1] != None:
-    #     return 0
-    play_list[position - 1] = is_player_a
+
+    alreadyOccupied = play_list[position - 1] != None
+    if alreadyOccupied:
+        return 0
+
+    position_to_index = position - 1
+    play_list[position_to_index] = is_player_a
     total = 0
-    all_verticals = all(
-        play_list[index] != None and play_list[index] == is_player_a
-        for index in range(position % n - 1, n * n, n)
+
+    # vericals
+    n_verticals = get_n_vertical_marker_from_position(
+        n,
+        is_player_a,
+        play_list,
+        position_to_index
     )
-    all_horizontals = all(
-        play_list[index] != None and play_list[index] == is_player_a
-        for index in range(n * (position // n), n * (position // n + 1))
-    )
-    print(list(range(n * (position // n), n * (position // n + 1))))
-    if all_verticals:
+    if n_verticals >= 3:
         total += 1
-    if all_horizontals:
-        total += 1        
+
+    # horizontals
+    n_horizontals = get_n_horizontal_marker_from_position(
+        n,
+        is_player_a,
+        play_list,
+        position_to_index
+    )
+    if n_horizontals >= 3:
+        total += 1
+
+    # right-up diagonals
+    n_right_up_diagonals = get_n_right_up_diagonal_marker_from_position(
+        n,
+        is_player_a,
+        play_list,
+        position_to_index
+    )
+    if n_right_up_diagonals >= 3:
+        total += 1
+
+    # left-up diagonals
+    n_left_up_diagonals = get_n_left_up_diagonal_marker_from_position(
+        n,
+        is_player_a,
+        play_list,
+        position_to_index
+    )
+    if n_left_up_diagonals >= 3:
+        total += 1
     return total
 
 if __name__ == "__main__":
-    print("hello")
+    playerA = input("type Player A name: ")
+    playerB = input("type Player B name: ")
+    n = int(input("type map size: "))
+    play_list = get_list_by_N(n)
+
+    inGame = True
+    print(print_map(n, play_list))
+    while inGame:
+        position = int(input(playerA + ", choose a box to place an 'o' into: \n>> "))
+        canWinA = check_all_same_markers_in_row(n, position, play_list, True) > 0
+
+        print(print_map(n, play_list))
+        if canWinA:
+            print("Congratulations {}! You have won.".format(playerA))
+            break
+
+        position = int(input(playerB + ", choose a box to place an 'x' into: \n>> "))
+        canWinB = check_all_same_markers_in_row(n, position, play_list, False) > 0
+
+        print(print_map(n, play_list))
+        if canWinB:
+            print("Congratulations {}! You have won.".format(playerB))
+            break
