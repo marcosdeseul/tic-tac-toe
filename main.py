@@ -54,17 +54,29 @@ def get_n_horizontal_marker_from_position(n, is_player_a, play_list, position_to
     return count_max_n_markers_in_rows(possible_indexes, play_list, is_player_a)
 
 def get_n_left_up_diagonal_marker_from_position(n, is_player_a, play_list, position_to_index):
+    room_to_left = position_to_index % n
+    room_to_top = position_to_index // n
+    room_to_right = n - position_to_index % n - 1
+    room_to_bottom = n - position_to_index // n - 1
+    left_end_margin = 2 if min(room_to_top, room_to_left) >= 2 else min(room_to_top, room_to_left)
+    right_end_margin = 2 if min(room_to_bottom, room_to_right) >= 2 else min(room_to_bottom, room_to_right)
     possible_indexes = [
         index for index
-        in range(position_to_index - 2 * (n+1), position_to_index + 2 * (n+1) + 1, n + 1)
+        in range(position_to_index - left_end_margin * (n+1), position_to_index + right_end_margin * (n+1) + 1, n + 1)
         if index >= 0 and index < n * n
     ]
     return count_max_n_markers_in_rows(possible_indexes, play_list, is_player_a)
 
 def get_n_right_up_diagonal_marker_from_position(n, is_player_a, play_list, position_to_index):
+    room_to_left = position_to_index % n
+    room_to_top = position_to_index // n
+    room_to_right = n - position_to_index % n - 1
+    room_to_bottom = n - position_to_index // n - 1
+    left_end_margin = 2 if min(room_to_top, room_to_right) >= 2 else min(room_to_top, room_to_right)
+    right_end_margin = 2 if min(room_to_bottom, room_to_left) >= 2 else min(room_to_bottom, room_to_left)
     possible_indexes = [
         index for index
-        in range(position_to_index - 2 * (n-1), position_to_index + 2 * (n-1) + 1, n - 1)
+        in range(position_to_index - left_end_margin * (n-1), position_to_index + right_end_margin * (n-1) + 1, n - 1)
         if index >= 2 and index < n * n - 2
     ]
     return count_max_n_markers_in_rows(possible_indexes, play_list, is_player_a)
